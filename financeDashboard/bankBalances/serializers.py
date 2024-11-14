@@ -15,9 +15,8 @@ class CurrencySerializer(serializers.ModelSerializer):
         if len(value) > 50:
             raise serializers.ValidationError("Description cannot exceed 50 characters.")
         return value
-
 class CurrentAssetSerializer(serializers.ModelSerializer):
-    currency = CurrencySerializer()
+    currency = serializers.PrimaryKeyRelatedField(queryset=Currency.objects.all())
 
     class Meta:
         model = CurrentAsset
@@ -29,28 +28,20 @@ class CurrentAssetSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        currency_data = validated_data.pop('currency')
-        currency, _ = Currency.objects.get_or_create(**currency_data)
-        return CurrentAsset.objects.create(currency=currency, **validated_data)
+        return CurrentAsset.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        currency_data = validated_data.pop('currency', None)
-        if currency_data:
-            currency, _ = Currency.objects.get_or_create(**currency_data)
-            instance.currency = currency
+        instance.currency = validated_data.get('currency', instance.currency)
         instance.amount = validated_data.get('amount', instance.amount)
         instance.save()
         return instance
 
 class NetCurrentAssetsSerializer(serializers.ModelSerializer):
+    currency = serializers.PrimaryKeyRelatedField(queryset=Currency.objects.all())
+
     class Meta:
         model = NetCurrentAsset
-        fields = ['id', 'currency', 'odsecurity_amount','odusage_amount']
-
-    def validate_currency(self, value):
-        if len(value) > 3:
-            raise serializers.ValidationError("Currency is denoted using 3 letters max.")
-        return value
+        fields = ['id', 'currency', 'odsecurity_amount', 'odusage_amount']
 
     def validate_odsecurity_amount(self, value):
         if value < 0:
@@ -58,7 +49,7 @@ class NetCurrentAssetsSerializer(serializers.ModelSerializer):
         return value
 
 class UnutilizedGrantSerializer(serializers.ModelSerializer):
-    currency = CurrencySerializer()
+    currency = serializers.PrimaryKeyRelatedField(queryset=Currency.objects.all())
 
     class Meta:
         model = UnutilizedGrant
@@ -75,15 +66,10 @@ class UnutilizedGrantSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        currency_data = validated_data.pop('currency')
-        currency, _ = Currency.objects.get_or_create(**currency_data)
-        return UnutilizedGrant.objects.create(currency=currency, **validated_data)
+        return UnutilizedGrant.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        currency_data = validated_data.pop('currency', None)
-        if currency_data:
-            currency, _ = Currency.objects.get_or_create(**currency_data)
-            instance.currency = currency
+        instance.currency = validated_data.get('currency', instance.currency)
         instance.donor = validated_data.get('donor', instance.donor)
         instance.amount = validated_data.get('amount', instance.amount)
         instance.save()
