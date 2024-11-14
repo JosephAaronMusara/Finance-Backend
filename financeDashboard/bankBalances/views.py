@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import generics
 from .serializers import *
 from django.http import JsonResponse
@@ -11,9 +10,6 @@ import requests
 # data = response.json()
 # print(data)
 		
-
-# crncies
-
 class CurrencyLC(generics.ListCreateAPIView):
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
@@ -26,35 +22,21 @@ class CurrencyRUD(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CurrencySerializer
     
 #CA
-class CurrentAssetsLC(generics.ListCreateAPIView):
-    queryset = CurrentAsset.objects.all()
-    serializer_class = CurrentAssetSerializer
-    filterset_fields = ['currency']
-    search_fields = ['currency']
-    ordering_fields = ['currency','amount']
+class BankBalanceListCreate(generics.ListCreateAPIView):
+    queryset = BankBalance.objects.all()
+    serializer_class = BankBalanceSerializer
+    filterset_fields = ['currency','type']
+    search_fields = ['currency','type','name']
+    ordering_fields = ['currency','amount','type']
 
-class CurrentAssetsRUD(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CurrentAsset.objects.all()
-    serializer_class = CurrentAssetSerializer
+class BankBalanceRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = BankBalance.objects.all()
+    serializer_class = BankBalanceSerializer
     
-#OD
-class NetCurrentAssetsLC(generics.ListCreateAPIView):
-    queryset = NetCurrentAsset.objects.all()
-    serializer_class = NetCurrentAssetsSerializer
-    ordering_fields = ['amount']
-    
-class NetCurrentAssetsRUD(generics.RetrieveUpdateDestroyAPIView):
-    queryset = NetCurrentAsset.objects.all()
-    serializer_class = NetCurrentAssetsSerializer
-    
-#Unutilised Grants
-class UnutilizedGrantLC(generics.ListCreateAPIView):
-    queryset = UnutilizedGrant.objects.all()
-    serializer_class = UnutilizedGrantSerializer
-    filterset_fields = ['currency', 'donor']
-    search_fields = ['currency','donor']
-    ordering_fields = ['amount']
-    
-class UnutilizedGrantRUD(generics.RetrieveUpdateDestroyAPIView):
-    queryset = UnutilizedGrant.objects.all()
-    serializer_class = UnutilizedGrantSerializer
+class AccountReceivableListCreate(generics.ListCreateAPIView):
+    queryset = AccountReceivable.objects.all()
+    serializer_class = AccountReceivableSerializer
+
+class AccountReceivableRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = AccountReceivable.objects.all()
+    serializer_class = AccountReceivableSerializer

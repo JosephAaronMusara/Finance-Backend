@@ -4,7 +4,7 @@ from .models import *
 class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
         model = Currency
-        fields = ['id', 'currency_code', 'description']
+        fields = ['id', 'currency_code', 'name']
 
     def validate_currency_code(self, value):
         if len(value) > 3:
@@ -13,14 +13,14 @@ class CurrencySerializer(serializers.ModelSerializer):
 
     def validate_description(self, value):
         if len(value) > 50:
-            raise serializers.ValidationError("Description cannot exceed 50 characters.")
+            raise serializers.ValidationError("Name cannot exceed 50 characters.")
         return value
-class CurrentAssetSerializer(serializers.ModelSerializer):
+class BankBalanceSerializer(serializers.ModelSerializer):
     currency = serializers.PrimaryKeyRelatedField(queryset=Currency.objects.all())
 
     class Meta:
-        model = CurrentAsset
-        fields = ['id', 'currency', 'amount']
+        model = BankBalance
+        fields = ['id','name','type', 'currency', 'amount']
 
     def validate_amount(self, value):
         if value <= 0:
@@ -28,64 +28,44 @@ class CurrentAssetSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        return CurrentAsset.objects.create(**validated_data)
+        return BankBalance.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         instance.currency = validated_data.get('currency', instance.currency)
+        instance.name = validated_data.get('name', instance.name)
         instance.amount = validated_data.get('amount', instance.amount)
+        instance.type = validated_data.get('type',instance.type)
+
         instance.save()
         return instance
-
-class NetCurrentAssetsSerializer(serializers.ModelSerializer):
-    currency = serializers.PrimaryKeyRelatedField(queryset=Currency.objects.all())
-
+    
+class AccountReceivableSerializer(serializers.ModelSerializer):
     class Meta:
-        model = NetCurrentAsset
-        fields = ['id', 'currency', 'odsecurity_amount', 'odusage_amount']
+        model = AccountReceivable
+        fields = '__all__'
 
-    def validate_odsecurity_amount(self, value):
-        if value < 0:
-            raise serializers.ValidationError("Amount must be non-negative.")
+    def validate_total_amount(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Amount must be greater than zero.")
         return value
-
-class UnutilizedGrantSerializer(serializers.ModelSerializer):
-    currency = serializers.PrimaryKeyRelatedField(queryset=Currency.objects.all())
-
-    class Meta:
-        model = UnutilizedGrant
-        fields = ['id', 'donor', 'currency', 'amount']
-
-    def validate_donor(self, value):
-        if len(value) > 50:
-            raise serializers.ValidationError("Donor name cannot exceed 50 characters.")
-        return value
-
-    def validate_amount(self, value):
-        if value < 0:
-            raise serializers.ValidationError("Amount must be non-negative.")
+    
+    def validate_balance(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Amount must be greater than zero.")
         return value
 
     def create(self, validated_data):
-        return UnutilizedGrant.objects.create(**validated_data)
+        return AccountReceivable.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.currency = validated_data.get('currency', instance.currency)
-        instance.donor = validated_data.get('donor', instance.donor)
-        instance.amount = validated_data.get('amount', instance.amount)
+        instance.invoice_date = validated_data.get('invoice_date', instance.invoice_date)
+        instance.invoice_number = validated_data.get('invoice_number', instance.invoice_number)
+        instance.customer_name = validated_data.get('customer_name', instance.customer_name)
+        instance.total_amount = validated_data.get('total_amount',instance.total_amount)
+        instance.due_date = validated_data.get('due_date', instance.due_date)
+        instance.balance = validated_data.get('balance',instance.balance)
+        instance.service_type = validated_data.get('service_type',instance.service_type)
+
+
         instance.save()
         return instance
-
-class TotalSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Total
-        fields = ['id', 'description', 'total_amount']
-
-    def validate_description(self, value):
-        if len(value) > 50:
-            raise serializers.ValidationError("Description cannot exceed 50 characters.")
-        return value
-
-    def validate_total_amount(self, value):
-        if value < 0:
-            raise serializers.ValidationError("Total amount must be non-negative.")
-        return value

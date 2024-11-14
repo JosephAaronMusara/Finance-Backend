@@ -2,12 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('currency/', views.CurrencyLC.as_view(), name='currency-lc'),
-    path('currency/<int:pk>/', views.CurrencyRUD.as_view(), name='currency-rud'),
-    path('currentasserts/', views.CurrentAssetsLC.as_view(), name='currentasserts-lc'),
-    path('currentasserts/<int:pk>/', views.CurrentAssetsRUD.as_view(), name='currentasserts-rud'),
-    path('overdraft/', views.NetCurrentAssetsLC.as_view(), name='od-lc'),
-    path('overdraft/<int:pk>/', views.NetCurrentAssetsRUD.as_view(), name='od-rud'),
-    path('grants/', views.UnutilizedGrantLC.as_view(), name='ug-lc'),
-    path('grants/<int:pk>/', views.UnutilizedGrantRUD.as_view(), name='ug-rud'),
+    path('bankbalance/', views.BankBalanceListCreate.as_view(), name='bankbalance-lc'),
+    path('bankbalance/<int:pk>/', views.BankBalanceRetrieveUpdateDestroy.as_view(), name='bankbalance-rud'),
+    path('accountreceivable/', views.AccountReceivableListCreate.as_view(), name='accountreceivable-lc'),
+    path('accountreceivable/<int:pk>/', views.AccountReceivableRetrieveUpdateDestroy.as_view(), name='accountreceivable-rud'),
 ]
