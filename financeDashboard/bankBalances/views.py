@@ -40,3 +40,11 @@ class AccountReceivableListCreate(generics.ListCreateAPIView):
 class AccountReceivableRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = AccountReceivable.objects.all()
     serializer_class = AccountReceivableSerializer
+    
+class ExpenseListCreate(generics.ListCreateAPIView):
+    queryset = Expense.objects.all()
+    serializer_class = ExpenseSerializer
+
+class ExpenseRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Expense.objects.all()
+    serializer_class = ExpenseSerializer

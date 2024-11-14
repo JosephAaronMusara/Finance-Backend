@@ -17,9 +17,9 @@ class BankBalance(models.Model):
         return f"{self.name} under {self.type}"
 
     
-# class Customer(models.Model):
-#     customer_name = models.CharField(max_length=50)
-#     contact
+class Expense(models.Model):
+    description = models.CharField(max_length=50)
+    amount = models.DecimalField(max_digits=20, decimal_places=2)
 
 class AccountReceivable(models.Model):
     invoice_date = models.DateField()

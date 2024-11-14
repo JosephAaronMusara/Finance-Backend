@@ -4,3 +4,4 @@ from .models import *
 admin.site.register(Currency)
 admin.site.register(BankBalance)
 admin.site.register(AccountReceivable)
+admin.site.register(Expense)

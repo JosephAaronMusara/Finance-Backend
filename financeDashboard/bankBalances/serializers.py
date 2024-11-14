@@ -69,3 +69,18 @@ class AccountReceivableSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+class ExpenseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Expense
+        fields = ['id', 'description', 'amount']
+
+    def validate_description(self, value):
+        if len(value) > 50:
+            raise serializers.ValidationError("Description cannot exceed 50 characters.")
+        return value
+
+    def validate_amount(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Amount must be greater than zero.")
+        return value
